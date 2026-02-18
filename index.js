@@ -78,12 +78,20 @@ app.put('/api/todos/:id', (req, res) => {
   const id = parseInt(req.params.id);
   const todos = readTodos();
   const todoIndex = todos.findIndex(t => t.id === id);
-  
+
   if (todoIndex === -1) {
     return res.status(404).json({ error: 'Todo not found' });
   }
-  
-  todos[todoIndex].completed = true;
+
+  // ✅ toggle จริง ๆ
+  todos[todoIndex].completed = !todos[todoIndex].completed;
+
+  // ✅ save ลงไฟล์
+  if (writeTodos(todos)) {
+    res.json(todos[todoIndex]);
+  } else {
+    res.status(500).json({ error: 'Failed to update todo' });
+  }
 });
 
 // Delete a todo
